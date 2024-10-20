@@ -22,6 +22,6 @@ This project is a JavaFX-based Inventory Management System.
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/your-repository-name.git
-   cd your-repository-name
+   git clone https://github.com/PiyushKulkarni05/InventryManagement-ebook_store-.git
+   cd InventryManagement-ebook_store-
   

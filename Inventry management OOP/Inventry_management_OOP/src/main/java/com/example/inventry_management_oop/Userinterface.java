@@ -91,29 +91,31 @@ public class Userinterface {
         });
     }
 
+    
     private void createheaderbar() {
         homeButton = new Button();
         Image image = new Image("file:///E:/Inventry management OOP/Inventry_management_OOP/src/homeicon.jpg");
-
-        ImageView imageView = new ImageView();
-        imageView.setImage(image);
+        ImageView imageView = new ImageView(image);
         imageView.setFitHeight(20);
         imageView.setFitWidth(30);
         homeButton.setGraphic(imageView);
 
-
         TextField searchbar = new TextField();
         searchbar.setPromptText("Search here..");
         searchbar.setPrefWidth(300);
+
         Button searchButton = new Button("Search");
+
         signInButton = new Button("Sign-In");
         welcomelabel = new Label();
         CartButton = new Button("Cart");
+
         Headerbar = new HBox(20);
         Headerbar.setPadding(new Insets(10));
         Headerbar.setSpacing(10);
         Headerbar.setAlignment(Pos.CENTER);
-        Headerbar.getChildren().addAll(homeButton,searchbar, searchButton, signInButton, CartButton);
+        Headerbar.getChildren().addAll(homeButton, searchbar, searchButton, signInButton, CartButton);
+
         signInButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -122,7 +124,30 @@ public class Userinterface {
                 Headerbar.getChildren().remove(signInButton);
             }
         });
+
+        // Add search functionality
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String searchText = searchbar.getText().toLowerCase();
+                searchProducts(searchText);
+            }
+        });
     }
+
+    private void searchProducts(String searchText) {
+        ObservableList<Product> filteredList = FXCollections.observableArrayList();
+
+        for (Product product : productList.getAllProducts()) {
+            if (product.getName().toLowerCase().contains(searchText) ||
+                    product.getAuthor().toLowerCase().contains(searchText)) {
+                filteredList.add(product);
+            }
+        }
+
+        productList.updateTable(filteredList);
+    }
+
 
     private void createFooterBar() {
         Button BuyNow = new Button("Add to Cart");
@@ -143,7 +168,7 @@ public class Userinterface {
                     showDialog("Please log in first");
                     return;
                 }
-                itemsincart.add(product); // Add the selected product to the cart
+                itemsincart.add(product);
                 showDialog("Selected item added to cart successfully");
             }
         });
@@ -156,14 +181,13 @@ public class Userinterface {
                 prodpage.setSpacing(10);
                 prodpage.getChildren().add(placeorderbutton);
                 body.getChildren().add(prodpage);
-                footerbar.setVisible(false);//footer gets off
+                footerbar.setVisible(false);
             }
         });
-
+        
         placeorderbutton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
                 if (itemsincart == null) {
                     showDialog("Please select a product first");
                     return;
@@ -172,29 +196,26 @@ public class Userinterface {
                     showDialog("Please log in first");
                     return;
                 }
-                int count =Order.placeMultipleorder(loggedInCustomer,itemsincart);
-                if(count!=0){
-                    showDialog("Order for "+(count+1)+" products placed Successfully");
-            }
-                else{
-                    showDialog("Order Failed..");
+                int count = Order.placeMultipleorder(loggedInCustomer, itemsincart);
+                if (count != 0) {
+                    showDialog("Order for " + count + " products placed successfully");
+                } else {
+                    showDialog("Order failed");
                 }
             }
         });
+
         homeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 body.getChildren().clear();
                 body.getChildren().add(productpage);
                 footerbar.setVisible(true);
-                if(loggedInCustomer==null && Headerbar.getChildren().indexOf(signInButton)==-1){
-
-                        Headerbar.getChildren().add(signInButton);
-
+                if (loggedInCustomer == null && !Headerbar.getChildren().contains(signInButton)) {
+                    Headerbar.getChildren().add(signInButton);
                 }
             }
         });
-
     }
 
     private void showDialog(String message) {
